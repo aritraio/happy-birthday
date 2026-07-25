@@ -11,13 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const particleField = qs('#particle-field');
   const cursorGlow = qs('.cursor-glow');
 
+  const allPhotos = Array.from({ length: 14 }, (_, i) => `assets/images/photo_${String(i + 1).padStart(2, '0')}.jpg`);
+
   const assets = {
-    images: [
-      'assets/images/photo-01.jpg',
-      'assets/images/photo-02.jpg',
-      'assets/images/photo-03.jpg',
-      'assets/images/cake.png'
-    ],
+    images: allPhotos,
     audio: {
       music: 'assets/audio/ambient.mp3',
       cut: 'assets/audio/cake-cut.mp3',
@@ -160,6 +157,20 @@ document.addEventListener('DOMContentLoaded', () => {
       .add(() => runScreenIntro(id), '<0.15');
   }
 
+  function pickRandomPhotos() {
+    const pool = [...allPhotos];
+    for (let i = pool.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const selected = pool.slice(0, 3);
+    qsa('.polaroid-img').forEach((img, idx) => {
+      if (selected[idx]) {
+        img.src = selected[idx];
+      }
+    });
+  }
+
   function runScreenIntro(id) {
     if (id === 'intro-screen') {
       gsap.fromTo('#intro-screen .word span', { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.15, stagger: 0.055, ease: 'expo.out' });
@@ -173,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (id === 'photo-screen') {
+      pickRandomPhotos();
       gsap.fromTo('#photo-screen .word span', { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.05, ease: 'expo.out' });
       gsap.fromTo('.polaroid', { y: 90, opacity: 0, scale: 0.88 }, { y: 0, opacity: 1, scale: 1, duration: 1.15, stagger: 0.13, ease: 'back.out(1.25)' });
       gsap.fromTo('#photo-screen .text-button', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.65 });
@@ -287,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function init() {
     audioController.init();
+    pickRandomPhotos();
     splitText();
     createAtmosphere();
     bindInteractions();
