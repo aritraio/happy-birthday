@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .to('.cake-left', { x: -72, y: 18, rotation: -10, duration: 1.15 }, '<0.04')
       .to('.cake-right', { x: 72, y: 18, rotation: 10, duration: 1.15 }, '<')
       .to('.cake-halo', { scale: 1.35, opacity: 0.88, duration: 0.55 }, '<')
-      .to('.cake-heading', { text: 'Happy Birthday, My Girl!', color: '#d96788', scale: 1.05, duration: 0.7 }, '<0.08')
+      .to('.cake-heading', { text: 'Happy Birthday, Dishari!', color: '#d96788', scale: 1.05, duration: 0.7 }, '<0.08')
       .to('.gesture-hint', { opacity: 0, y: 12, duration: 0.35 }, '<')
       .to('.cake-next', { opacity: 1, pointerEvents: 'auto', y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.5)' }, '+=1.25');
   }
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.to(cursorGlow, { x: event.clientX, y: event.clientY, duration: 0.45, ease: 'power3.out' });
       }
 
-      if (state.current === 'cake-screen' && !state.cakeCut) {
+      if (!isMobile && state.current === 'cake-screen' && !state.cakeCut) {
         const x = (event.clientX / window.innerWidth - 0.5) * 14;
         const y = (event.clientY / window.innerHeight - 0.5) * 10;
         gsap.to('.cake-stage', { x, y, rotateY: x * 0.25, rotateX: -y * 0.2, duration: 0.5, ease: 'power3.out' });
@@ -246,12 +246,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     qsa('.magnetic').forEach((button) => {
       button.addEventListener('pointermove', (event) => {
+        if (isMobile) return;
         const rect = button.getBoundingClientRect();
         const x = (event.clientX - rect.left - rect.width / 2) * 0.18;
         const y = (event.clientY - rect.top - rect.height / 2) * 0.18;
         gsap.to(button, { x, y, scale: 1.035, duration: 0.35, ease: 'power3.out' });
       });
-      button.addEventListener('pointerleave', () => gsap.to(button, { x: 0, y: 0, scale: 1, duration: 0.55, ease: 'elastic.out(1, .45)' }));
+      button.addEventListener('pointerleave', () => {
+        if (isMobile) return;
+        gsap.to(button, { x: 0, y: 0, scale: 1, duration: 0.55, ease: 'elastic.out(1, .45)' });
+      });
       button.addEventListener('click', () => audioController.play('click', 0.38));
     });
 
